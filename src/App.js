@@ -11,8 +11,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Login socket={socket} />}></Route>
-          <Route  path="/signup" element={<Signup />}></Route>
-          <Route  path="/chatpage" element={<Chatpage socket={socket} />}></Route>
         </Routes>
       </BrowserRouter>
     
