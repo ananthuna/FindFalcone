@@ -1,16 +1,13 @@
 import './App.css';
 import Login from './pages/Login'
-import Signup from './pages/Sigup'
-import Chatpage from './pages/Chatpage'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import socket from './socket'
 
 function App() {
   return (
     
       <BrowserRouter>
         <Routes>
-          <Route exact path="/" element={<Login socket={socket} />}></Route>
+          <Route exact path="/" element={<Login/>}></Route>
         </Routes>
       </BrowserRouter>
     
