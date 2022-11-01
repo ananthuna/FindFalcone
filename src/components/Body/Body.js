@@ -7,8 +7,8 @@ import ShipList from '../shiplist/ShipList'
 
 function Body() {
     return (
-        <Box sx={{ height: '31.6rem' }}>
-            <Box sx={{ pl: '40%',pt:'3rem' }}>
+        <Box sx={{ height: '31.6rem'}}>
+            <Box sx={{ pl: '40%', pt: '3rem' }}>
                 <Typography variant='h6'>Select planets you wants to search</Typography>
             </Box>
             <Box sx={{
@@ -17,8 +17,8 @@ function Body() {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 height: '70%',
-                pl:'2rem',
-                pr:'2rem'
+                pl: '2rem',
+                pr: '2rem'
             }}>
                 {items.map((item) => (
                     <Box>
@@ -38,9 +38,10 @@ function Body() {
                     <Typography>Time taken: 120</Typography>
                 </Box>
             </Box>
-            <Box sx={{display:'flex',justifyContent:'center'}}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button variant="contained">Find Falcone</Button>
             </Box>
+
         </Box>
     )
 }
@@ -58,3 +59,5 @@ const top100Films = [
     { name: '12 Angry Men', year: 1957 },
     { name: "Schindler's List", year: 1993 },
     { name: 'Pulp Fiction', year: 1994 }]
+
+
