@@ -1,21 +1,37 @@
 import { FormControl, FormControlLabel, Radio, RadioGroup, } from '@mui/material'
-import React from 'react'
+import React, { useContext, useState } from 'react'
+import { UserContext } from '../Context/Context'
+
 
 function ShipList() {
-    return (
-        <FormControl>
-            <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="ship1"
-                name="radio-buttons-group"
-            >
-                <FormControlLabel value="ship1" control={<Radio />} label="ship" />
-                <FormControlLabel value="ship2" control={<Radio />} label="ship" />
-                <FormControlLabel value="ship3" control={<Radio />} label="ship" />
-                <FormControlLabel value="ship4" control={<Radio />} label="ship" />
-            </RadioGroup>
-        </FormControl>
-    )
+
+  const { List, setVehicle, setNumb, numb } = useContext(UserContext)
+  const [selectedVehicle, setselectedVehicle] = useState('')
+
+
+  return (
+    <FormControl onClick={e => {
+      setVehicle(e.target.value)
+      setselectedVehicle(e.target.value)
+      setNumb(numb + 1)
+    }}>
+      <RadioGroup
+        aria-labelledby="demo-radio-buttons-group-label"
+        defaultValue=''
+        name="radio-buttons-group"
+      >
+        {List.map((list) => (
+          <FormControlLabel
+            value={list.name}
+            disabled={list.total_no === 0 && selectedVehicle !== list.name}
+            control={<Radio />}
+            label={list.name + '(' + list.total_no + ')'}
+          />
+        ))}
+
+      </RadioGroup>
+    </FormControl>
+  )
 }
 
 export default ShipList

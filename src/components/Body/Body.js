@@ -1,13 +1,105 @@
 import { Autocomplete, TextField, Typography } from '@mui/material'
 import Button from '@mui/material/Button';
 import { Box } from '@mui/system'
-import React from 'react'
+import React, { useContext, useEffect, useState, useSyncExternalStore } from 'react'
 import './body.css'
 import ShipList from '../shiplist/ShipList'
+import axios from 'axios'
+import { planetsUrl, tokenUrl, findUrl, VehiclesUrl } from '../URL/Url'
+import { UserContext } from '../Context/Context'
 
 function Body() {
+    const [planetsList, setplanetsList] = useState([])
+    const [Token, setToken] = useState()
+    const [selectedPlanets, setselectedPlanets] = useState([])
+    const { setList, vehicle, List, numb } = useContext(UserContext)
+
+    useEffect(() => {
+        axios.get(planetsUrl).then((doc) => {
+            setplanetsList(doc.data)
+            // console.log('planits');
+        }).catch((err) => {
+            console.log(err);
+        })
+        axios.get(VehiclesUrl).then((doc) => {
+            setList(doc.data)
+        })
+    }, [])
+
+    useEffect(() => {
+        
+        setList(current =>
+            current.map(obj => {
+                if (obj.name === vehicle && obj.total_no > 0) {
+                    
+                    return { ...obj, total_no: obj.total_no - 1 };
+                }
+                return obj;
+            }),
+        );
+    }, [numb])
+
+
+
+
+
+    const data = {
+        token: Token,
+        planet_names: selectedPlanets,
+        vehicle_names: [
+            'Space pod',
+            'Space rocket',
+            'Space rocket',
+            'Space rocket'
+        ]
+    }
+
+    const json = JSON.stringify(data);
+
+
+
+    const handleFind = () => {
+        axios({
+            method: 'post',
+            url: tokenUrl,
+            headers: {
+                'Accept': 'application/json'
+            },
+        }).then((doc) => {
+            console.log(doc.data);
+            setToken(doc.data.token)
+        })
+
+        if (Token) {
+            axios({
+                method: 'post',
+                url: findUrl,
+                data: json,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then((doc) => {
+                console.log(doc.data);
+            })
+        }
+    }
+    function handlePlanetSelection(name, index) {
+
+        for (let i in items) {
+            if (items[i] === index) {
+                selectedPlanets.splice(i, 1, name)
+            }
+
+        }
+    }
+
+
+
+
+
     return (
-        <Box sx={{ height: '31.6rem'}}>
+        <Box sx={{ height: '31.6rem' }}>
             <Box sx={{ pl: '40%', pt: '3rem' }}>
                 <Typography variant='h6'>Select planets you wants to search</Typography>
             </Box>
@@ -20,26 +112,31 @@ function Body() {
                 pl: '2rem',
                 pr: '2rem'
             }}>
+
                 {items.map((item) => (
                     <Box>
                         <Typography>{item}</Typography>
                         <Autocomplete
                             id="combo-box-demo"
-                            options={top100Films}
+                            options={planetsList}
                             sx={{ width: 250, height: 50 }}
                             getOptionLabel={(options) => options.name}
+                            getOptionDisabled={(option) => !!selectedPlanets.find(element => element === option.name)}
                             renderInput={(params) => <TextField {...params} />}
+                            onChange={(event, value) => { handlePlanetSelection(value.name, item) }}
                         />
                         <ShipList />
-
                     </Box>
                 ))}
+
                 <Box sx={{ pt: '5rem' }}>
                     <Typography>Time taken: 120</Typography>
                 </Box>
+
             </Box>
+
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button variant="contained">Find Falcone</Button>
+                <Button onClick={handleFind} variant="contained">Find Falcone</Button>
             </Box>
 
         </Box>
@@ -48,16 +145,8 @@ function Body() {
 
 export default Body
 
-const items = ['Destination1', 'Destination2', 'Destination3', 'Destination4']
-
-
-const top100Films = [
-    { name: 'The Shawshank Redemption', year: 1994 },
-    { name: 'The Godfather', year: 1972 },
-    { name: 'The Godfather: Part II', year: 1974 },
-    { name: 'The Dark Knight', year: 2008 },
-    { name: '12 Angry Men', year: 1957 },
-    { name: "Schindler's List", year: 1993 },
-    { name: 'Pulp Fiction', year: 1994 }]
-
-
+const items = [
+    'Destination1',
+    'Destination2',
+    'Destination3',
+    'Destination4']
