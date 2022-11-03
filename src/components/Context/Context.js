@@ -6,7 +6,10 @@ export default function Context({ children }) {
     const [List, setList] = useState([])
     const [vehicle, setVehicle] = useState('')
     const [numb, setNumb] = useState(0)
-    const [selectedVehicle, setselectedVehicle] = useState([])
+    const [destination, setdestination] = useState('')
+    const [selectedShip, setselectedShip] = useState([])
+    const [result, setresult] = useState(null)
+
 
 
 
@@ -18,6 +21,12 @@ export default function Context({ children }) {
             setVehicle,
             numb,
             setNumb,
+            destination,
+            setdestination,
+            selectedShip,
+            setselectedShip,
+            result,
+            setresult
         }}>
             {children}
         </UserContext.Provider>

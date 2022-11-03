@@ -3,17 +3,21 @@ import React, { useContext, useState } from 'react'
 import { UserContext } from '../Context/Context'
 
 
-function ShipList() {
+function ShipList({ destination }) {
 
-  const { List, setVehicle, setNumb, numb } = useContext(UserContext)
+  const { List, setVehicle, setNumb, numb, setdestination, selectedShip } = useContext(UserContext)
   const [selectedVehicle, setselectedVehicle] = useState('')
+
+
 
 
   return (
     <FormControl onClick={e => {
       setVehicle(e.target.value)
       setselectedVehicle(e.target.value)
+      setdestination(destination)
       setNumb(numb + 1)
+      selectedShip.push(e.target.value)
     }}>
       <RadioGroup
         aria-labelledby="demo-radio-buttons-group-label"

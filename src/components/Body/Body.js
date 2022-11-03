@@ -1,64 +1,35 @@
 import { Autocomplete, TextField, Typography } from '@mui/material'
 import Button from '@mui/material/Button';
 import { Box } from '@mui/system'
-import React, { useContext, useEffect, useState, useSyncExternalStore } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './body.css'
 import ShipList from '../shiplist/ShipList'
 import axios from 'axios'
 import { planetsUrl, tokenUrl, findUrl, VehiclesUrl } from '../URL/Url'
 import { UserContext } from '../Context/Context'
+import { useNavigate } from 'react-router-dom'
 
 function Body() {
     const [planetsList, setplanetsList] = useState([])
     const [Token, setToken] = useState()
     const [selectedPlanets, setselectedPlanets] = useState([])
-    const { setList, vehicle, List, numb } = useContext(UserContext)
+    const { setList, vehicle, List, numb, destination, selectedShip, setresult } = useContext(UserContext)
+    const [changeValue, setchangeValue] = useState('')
+    const [oldDestination, setoldDestination] = useState('')
+    const navigate = useNavigate()
 
     useEffect(() => {
+        //fetch planets data
         axios.get(planetsUrl).then((doc) => {
             setplanetsList(doc.data)
-            // console.log('planits');
         }).catch((err) => {
             console.log(err);
         })
+        //fetch ship data
         axios.get(VehiclesUrl).then((doc) => {
             setList(doc.data)
         })
-    }, [])
-
-    useEffect(() => {
-        
-        setList(current =>
-            current.map(obj => {
-                if (obj.name === vehicle && obj.total_no > 0) {
-                    
-                    return { ...obj, total_no: obj.total_no - 1 };
-                }
-                return obj;
-            }),
-        );
-    }, [numb])
-
-
-
-
-
-    const data = {
-        token: Token,
-        planet_names: selectedPlanets,
-        vehicle_names: [
-            'Space pod',
-            'Space rocket',
-            'Space rocket',
-            'Space rocket'
-        ]
-    }
-
-    const json = JSON.stringify(data);
-
-
-
-    const handleFind = () => {
+        //fetch token 
         axios({
             method: 'post',
             url: tokenUrl,
@@ -66,24 +37,76 @@ function Body() {
                 'Accept': 'application/json'
             },
         }).then((doc) => {
-            console.log(doc.data);
+            console.log('token:' + doc.data.token);
             setToken(doc.data.token)
+
         })
 
-        if (Token) {
-            axios({
-                method: 'post',
-                url: findUrl,
-                data: json,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then((doc) => {
-                console.log(doc.data);
-            })
+    }, [])
+
+
+
+
+    useEffect(() => {
+        console.log(destination);
+        if (changeValue !== vehicle && oldDestination === destination) {
+            setList(current =>
+                current.map(obj => {
+                    if (obj.name === changeValue) {
+                        return { ...obj, total_no: obj.total_no + 1 };
+                    }
+                    return obj;
+                }),
+            );
         }
+
+        setList(current =>
+            current.map(obj => {
+                if (obj.name === vehicle && obj.total_no > 0) {
+                    setchangeValue(vehicle)
+                    setoldDestination(destination)
+                    return { ...obj, total_no: obj.total_no - 1 };
+                }
+                return obj;
+            }),
+        );
+
+
+
+    }, [numb])
+
+
+
+
+    const handleFind = () => {
+        const data = {
+            token: Token,
+            planet_names: selectedPlanets,
+            vehicle_names: selectedShip
+        }
+
+        const json = JSON.stringify(data);
+        console.log(json);
+
+
+        axios({
+            method: 'post',
+            url: findUrl,
+            data: json,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then((doc) => {
+            console.log('result' + doc.data.status);
+            setresult(doc.data)
+            navigate('/result')
+        })
+
+
     }
+
+
     function handlePlanetSelection(name, index) {
 
         for (let i in items) {
@@ -125,7 +148,7 @@ function Body() {
                             renderInput={(params) => <TextField {...params} />}
                             onChange={(event, value) => { handlePlanetSelection(value.name, item) }}
                         />
-                        <ShipList />
+                        <ShipList destination={item} />
                     </Box>
                 ))}
 
