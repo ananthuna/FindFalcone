@@ -9,7 +9,7 @@ function Footer() {
       <Typography variant="body2" color="text.secondary" align="center">
         {'Copyright © '}
         <Link color="inherit" href="https://github.com/ananthuna/FindFalcone">
-          Your Website
+          My Github Repository
         </Link>{' '}
         {new Date().getFullYear()}
         {'.'}
